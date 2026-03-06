@@ -1,5 +1,6 @@
 <script>
 	import * as Card from './ui/card';
+	import * as Accordion from './ui/accordion';
 </script>
 
 <Card.Root>
