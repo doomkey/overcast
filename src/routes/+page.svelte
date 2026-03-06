@@ -14,7 +14,7 @@
 	import FAQ from '$lib/components/FAQ.svelte';
 
 	let state = $state({
-		subtitle: { value: '', visible: true, placeholder: 'An assignment on' },
+		subtitle: { value: '', visible: true, placeholder: 'A report on' },
 		title: { value: '', visible: true, placeholder: 'Title of the document' },
 		submittedTo: { value: '', visible: true, placeholder: 'Name of the professor' },
 		designation: { value: '', visible: true, placeholder: 'Designation' },
