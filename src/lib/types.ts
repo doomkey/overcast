@@ -10,7 +10,9 @@ export interface CoverState {
 	submittedTo: Field;
 	designation: Field;
 	dept: Field;
+	dept_bottom: Field;
 	varsity: Field;
+	varsity_bottom: Field;
 	submittedBy: Field;
 	studentId: Field;
 	regNo: Field;

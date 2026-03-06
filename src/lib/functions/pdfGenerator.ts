@@ -90,11 +90,13 @@ export function createPDFDocument(state: CoverState) {
 		doc.text(`Submission date: ${dateText}`, centerX, 220, { align: 'center' });
 	}
 
-	doc.setFont('tinos', 'normal').setFontSize(11);
-	doc.text(getVal(state.dept_bottom), centerX, 275, { align: 'center' });
-
-	doc.setFont('tinos', 'bold').setFontSize(14);
-	doc.text(getVal(state.varsity_bottom), centerX, 282, { align: 'center' });
-
+	if (state.dept_bottom.visible) {
+		doc.setFont('tinos', 'normal').setFontSize(12);
+		doc.text(getVal(state.dept_bottom), centerX, 275, { align: 'center' });
+	}
+	if (state.varsity_bottom.visible) {
+		doc.setFont('tinos', 'bold').setFontSize(16);
+		doc.text(getVal(state.varsity_bottom), centerX, 282, { align: 'center' });
+	}
 	return doc;
 }

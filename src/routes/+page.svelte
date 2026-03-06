@@ -161,22 +161,28 @@
 				<div class="space-y-4">
 					<h4 class="text-sm leading-none font-medium">Institution Information</h4>
 					<div class="space-y-4">
-						<Input
-							placeholder="Department name"
-							disabled={conditions.dept}
-							bind:value={state.dept_bottom.value}
-						/>
+						<div class="flex items-center gap-4">
+							<Input
+								placeholder="Department name"
+								disabled={conditions.dept}
+								bind:value={state.dept_bottom.value}
+							/>
+							<Switch bind:checked={state.dept_bottom.visible} />
+						</div>
 						<div class="flex items-center gap-3">
 							<Checkbox id="department-same" bind:checked={conditions.dept} />
 							<Label for="department-same">Same as teacher's department</Label>
 						</div>
 					</div>
 					<div class="space-y-4">
-						<Input
-							placeholder="Name of the Institute"
-							bind:value={state.varsity_bottom.value}
-							disabled={conditions.varsity}
-						/>
+						<div class="flex items-center gap-4">
+							<Input
+								placeholder="Name of the Institute"
+								bind:value={state.varsity_bottom.value}
+								disabled={conditions.varsity}
+							/>
+							<Switch bind:checked={state.varsity_bottom.visible} />
+						</div>
 						<div class="flex items-center gap-3">
 							<Checkbox id="institute-same" bind:checked={conditions.varsity} />
 							<Label for="institute-same">Same as teacher's institute</Label>
