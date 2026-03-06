@@ -195,12 +195,6 @@
 						Yes, use the toggle switches next to each input to hide specific lines from the PDF.
 					</p>
 				</details>
-				<details class="rounded-lg border bg-card p-4 text-card-foreground shadow-sm">
-					<summary class="cursor-pointer font-medium">The preview is not showing...</summary>
-					<p class="mt-2 text-sm text-muted-foreground">
-						On mobile, preview is not available in all browsers.
-					</p>
-				</details>
 			</div>
 		</div>
 	</section>
