@@ -81,11 +81,19 @@
 			<Card.Content class="space-y-6">
 				<div class="space-y-4">
 					<div class="flex items-center gap-4">
-						<Input bind:value={state.subtitle.value} placeholder={state.subtitle.placeholder} />
+						<Input
+							bind:value={state.subtitle.value}
+							placeholder={state.subtitle.placeholder}
+							disabled={!state.subtitle.visible}
+						/>
 						<Switch bind:checked={state.subtitle.visible} />
 					</div>
 					<div class="flex items-center gap-4">
-						<Input bind:value={state.title.value} placeholder={state.title.placeholder} />
+						<Input
+							bind:value={state.title.value}
+							placeholder={state.title.placeholder}
+							disabled={!state.title.visible}
+						/>
 						<Switch bind:checked={state.title.visible} />
 					</div>
 				</div>
@@ -97,7 +105,11 @@
 					{#each ['submittedTo', 'designation', 'dept', 'varsity'] as key}
 						{@const field = state[key as keyof typeof state]}
 						<div class="flex items-center gap-4">
-							<Input bind:value={field.value} placeholder={field.placeholder} />
+							<Input
+								bind:value={field.value}
+								placeholder={field.placeholder}
+								disabled={!field.visible}
+							/>
 							<Switch bind:checked={field.visible} />
 						</div>
 					{/each}
