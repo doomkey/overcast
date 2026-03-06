@@ -150,7 +150,7 @@
 
 				<div class="space-y-4">
 					<h4 class="text-sm leading-none font-medium">Submitted by</h4>
-					{#each ['submittedBy', 'studentId', 'regNo', 'date'] as key}
+					{#each ['submittedBy', 'studentId', 'regNo', 'session', 'date'] as key}
 						{@const field = state[key as keyof typeof state]}
 						<div class="flex items-center gap-4">
 							<Input bind:value={field.value} placeholder={field.placeholder} />
