@@ -16,9 +16,13 @@
 		title: { value: '', visible: true, placeholder: 'Title of the document' },
 		submittedTo: { value: '', visible: true, placeholder: 'Name of the professor' },
 		designation: { value: '', visible: true, placeholder: 'Designation' },
-		dept: { value: '', visible: true, placeholder: 'Department Name' },
+		dept: { value: 'Department of Dept.', visible: true, placeholder: 'Department Name' },
 		dept_bottom: { value: '', visible: true, placeholder: 'Department Name' },
-		varsity: { value: '', visible: true, placeholder: 'Name of the Institution' },
+		varsity: {
+			value: 'Patuakhali Science and Technology University',
+			visible: true,
+			placeholder: 'Name of the Institution'
+		},
 		varsity_bottom: { value: '', visible: true, placeholder: 'Name of the Institution' },
 		submittedBy: { value: '', visible: true, placeholder: 'Student Name' },
 		studentId: { value: '', visible: true, placeholder: 'ID Number' },
