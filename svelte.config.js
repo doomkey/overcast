@@ -5,7 +5,7 @@ const config = {
 	kit: {
 		adapter: adapter(),
 		paths: {
-			base: process.argv.includes('dev') ? '' : '/overcast'
+			base: process.argv.includes('dev') ? '' : 'overcast'
 		}
 	}
 };
