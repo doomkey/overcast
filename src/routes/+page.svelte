@@ -10,6 +10,8 @@
 	import { Separator } from '$lib/components/ui/separator';
 	import { Checkbox } from '$lib/components/ui/checkbox';
 	import { Label } from '$lib/components/ui/label';
+	import Roadmap from '$lib/components/Roadmap.svelte';
+	import FAQ from '$lib/components/FAQ.svelte';
 
 	let state = $state({
 		subtitle: { value: '', visible: true, placeholder: 'An assignment on' },
@@ -195,40 +197,7 @@
 				{/if}
 			</Card.Root>
 		</section>
-		<Card.Root>
-			<Card.Header>
-				<h3 class="text-lg font-bold">FAQ</h3>
-			</Card.Header>
-			<Card.Content>
-				<Accordion.Root class="w-full">
-					<Accordion.Item value="how-to-use">
-						<Accordion.Trigger class="font-medium">How to use this?</Accordion.Trigger>
-						<Accordion.Content class="text-sm text-muted-foreground">
-							Just fill in the input boxes. The preview updates automatically.
-						</Accordion.Content>
-					</Accordion.Item>
-
-					<Accordion.Item value="hide-fields">
-						<Accordion.Trigger class="font-medium">Can I hide fields?</Accordion.Trigger>
-						<Accordion.Content class="text-sm text-muted-foreground">
-							Yes, use the toggle switches next to each input to hide specific data.
-						</Accordion.Content>
-					</Accordion.Item>
-				</Accordion.Root>
-			</Card.Content>
-		</Card.Root>
-		<Card.Root>
-			<Card.Header>
-				<Card.Title>
-					<h3 class="text-lg font-bold">Roadmap</h3>
-				</Card.Title>
-			</Card.Header>
-			<Card.Content>
-				<ol>
-					<li>Templates</li>
-					<li>Fonts</li>
-				</ol>
-			</Card.Content>
-		</Card.Root>
+		<FAQ />
+		<Roadmap />
 	</section>
 </main>
