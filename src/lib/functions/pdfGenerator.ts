@@ -79,10 +79,10 @@ export function createPDFDocument(state: CoverState) {
 	}
 
 	doc.setFont('times', 'normal').setFontSize(11);
-	doc.text(getVal(state.dept), centerX, 275, { align: 'center' });
+	doc.text(getVal(state.dept_bottom), centerX, 275, { align: 'center' });
 
 	doc.setFont('times', 'bold').setFontSize(14);
-	doc.text(getVal(state.varsity), centerX, 282, { align: 'center' });
+	doc.text(getVal(state.varsity_bottom), centerX, 282, { align: 'center' });
 
 	return doc;
 }

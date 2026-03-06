@@ -7,6 +7,8 @@
 	import { Switch } from '$lib/components/ui/switch';
 	import { Button } from '$lib/components/ui/button';
 	import { Separator } from '$lib/components/ui/separator';
+	import { Checkbox } from '$lib/components/ui/checkbox';
+	import { Label } from '$lib/components/ui/label';
 
 	let state = $state({
 		subtitle: { value: '', visible: true, placeholder: 'An assignment on' },
@@ -14,11 +16,26 @@
 		submittedTo: { value: '', visible: true, placeholder: 'Name of the professor' },
 		designation: { value: '', visible: true, placeholder: 'Designation' },
 		dept: { value: '', visible: true, placeholder: 'Department Name' },
+		dept_bottom: { value: '', visible: true, placeholder: 'Department Name' },
 		varsity: { value: '', visible: true, placeholder: 'Name of the Institution' },
+		varsity_bottom: { value: '', visible: true, placeholder: 'Name of the Institution' },
 		submittedBy: { value: '', visible: true, placeholder: 'Student Name' },
 		studentId: { value: '', visible: true, placeholder: 'ID Number' },
 		regNo: { value: '', visible: true, placeholder: 'Registration No' },
 		date: { value: '', visible: true, placeholder: 'Submission Date' }
+	});
+	let conditions = $state({
+		varsity: true,
+		dept: true
+	});
+
+	$effect(() => {
+		if (conditions.varsity) {
+			state.varsity_bottom.value = state.varsity.value;
+		}
+		if (conditions.dept) {
+			state.dept_bottom.value = state.dept.value;
+		}
 	});
 
 	let previewUrl = $state('');
@@ -76,7 +93,7 @@
 				<Separator />
 
 				<div class="space-y-4">
-					<h4 class="text-sm leading-none font-medium">Submitted To:</h4>
+					<h4 class="text-sm leading-none font-medium">Submitted to</h4>
 					{#each ['submittedTo', 'designation', 'dept', 'varsity'] as key}
 						{@const field = state[key as keyof typeof state]}
 						<div class="flex items-center gap-4">
@@ -89,7 +106,7 @@
 				<Separator />
 
 				<div class="space-y-4">
-					<h4 class="text-sm leading-none font-medium">Submitted By:</h4>
+					<h4 class="text-sm leading-none font-medium">Submitted by</h4>
 					{#each ['submittedBy', 'studentId', 'regNo', 'date'] as key}
 						{@const field = state[key as keyof typeof state]}
 						<div class="flex items-center gap-4">
@@ -98,7 +115,31 @@
 						</div>
 					{/each}
 				</div>
-
+				<div class="space-y-4">
+					<h4 class="text-sm leading-none font-medium">Institution Information</h4>
+					<div class="space-y-4">
+						<Input
+							placeholder="Department name"
+							disabled={conditions.dept}
+							bind:value={state.dept_bottom.value}
+						/>
+						<div class="flex items-center gap-3">
+							<Checkbox id="department-same" bind:checked={conditions.dept} />
+							<Label for="department-same">Same as teacher's department</Label>
+						</div>
+					</div>
+					<div class="space-y-4">
+						<Input
+							placeholder="Name of the Institute"
+							bind:value={state.varsity_bottom.value}
+							bind:disabled={conditions.varsity}
+						/>
+						<div class="flex items-center gap-3">
+							<Checkbox id="institute-same" bind:checked={conditions.varsity} />
+							<Label for="institute-same">Same as teacher's institute</Label>
+						</div>
+					</div>
+				</div>
 				<Button class="w-full" onclick={download}>Download PDF</Button>
 			</Card.Content>
 		</Card.Root>
