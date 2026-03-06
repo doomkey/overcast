@@ -144,7 +144,7 @@
 						<Input
 							placeholder="Name of the Institute"
 							bind:value={state.varsity_bottom.value}
-							bind:disabled={conditions.varsity}
+							disabled={conditions.varsity}
 						/>
 						<div class="flex items-center gap-3">
 							<Checkbox id="institute-same" bind:checked={conditions.varsity} />
