@@ -1,8 +1,15 @@
 import { jsPDF } from 'jspdf';
-import type { CoverState } from './types';
-
+import type { CoverState } from '../types';
+import { tinosNormal, tinosBold } from '$lib/assets/fonts';
 export function createPDFDocument(state: CoverState) {
 	const doc = new jsPDF();
+	doc.addFileToVFS('Tinos-Regular.ttf', tinosNormal);
+	doc.addFont('Tinos-Regular.ttf', 'tinos', 'normal');
+
+	doc.addFileToVFS('Tinos-Bold.ttf', tinosBold);
+	doc.addFont('Tinos-Bold.ttf', 'tinos', 'bold');
+
+	doc.setFont('tinos');
 	const pageWidth = doc.internal.pageSize.getWidth();
 	const centerX = pageWidth / 2;
 
@@ -14,12 +21,12 @@ export function createPDFDocument(state: CoverState) {
 	doc.line(20, 65, pageWidth - 20, 65);
 
 	if (state.subtitle.visible) {
-		doc.setFont('times', 'bold').setFontSize(12);
+		doc.setFont('tinos', 'bold').setFontSize(12);
 		doc.text(getVal(state.subtitle), centerX, 40, { align: 'center' });
 	}
 
 	if (state.title.visible) {
-		doc.setFont('times', 'bold').setFontSize(18);
+		doc.setFont('tinos', 'bold').setFontSize(18);
 		doc.text(getVal(state.title), centerX, 55, { align: 'center' });
 	}
 
@@ -30,10 +37,10 @@ export function createPDFDocument(state: CoverState) {
 		state.varsity.visible;
 
 	if (showTo) {
-		doc.setFont('times', 'bold').setFontSize(12);
+		doc.setFont('tinos', 'bold').setFontSize(12);
 		doc.text('Submitted to:', centerX, 110, { align: 'center' });
 
-		doc.setFont('times', 'normal');
+		doc.setFont('tinos', 'normal');
 		let y = 118;
 		const fieldsTo: (keyof CoverState)[] = ['submittedTo', 'designation', 'dept', 'varsity'];
 
@@ -48,10 +55,10 @@ export function createPDFDocument(state: CoverState) {
 	const showBy = state.submittedBy.visible || state.studentId.visible || state.regNo.visible;
 
 	if (showBy) {
-		doc.setFont('times', 'bold');
+		doc.setFont('tinos', 'bold');
 		doc.text('Submitted by:', centerX, 165, { align: 'center' });
 
-		doc.setFont('times', 'normal');
+		doc.setFont('tinos', 'normal');
 		const labelX = centerX - 25;
 		const valueX = centerX - 5;
 		let y = 175;
@@ -73,15 +80,15 @@ export function createPDFDocument(state: CoverState) {
 	}
 
 	if (state.date.visible) {
-		doc.setFont('times', 'normal').setFontSize(12);
+		doc.setFont('tinos', 'normal').setFontSize(12);
 		const dateText = state.date.value ? state.date.value : '_____________________';
 		doc.text(`Submission date: ${dateText}`, centerX, 220, { align: 'center' });
 	}
 
-	doc.setFont('times', 'normal').setFontSize(11);
+	doc.setFont('tinos', 'normal').setFontSize(11);
 	doc.text(getVal(state.dept_bottom), centerX, 275, { align: 'center' });
 
-	doc.setFont('times', 'bold').setFontSize(14);
+	doc.setFont('tinos', 'bold').setFontSize(14);
 	doc.text(getVal(state.varsity_bottom), centerX, 282, { align: 'center' });
 
 	return doc;

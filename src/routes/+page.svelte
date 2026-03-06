@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { createPDFDocument } from '$lib/functions/pdfGenerator';
-
+	import PDFWorker from 'pdfjs-dist/legacy/build/pdf.worker.mjs?worker';
 	import * as Card from '$lib/components/ui/card';
 	import { Input } from '$lib/components/ui/input';
 	import { Switch } from '$lib/components/ui/switch';
@@ -39,23 +39,46 @@
 	});
 
 	let previewUrl = $state('');
-
 	$effect(() => {
 		if (!browser) return;
 
 		const currentState = $state.snapshot(state);
-		const updatePreview = () => {
-			const doc = createPDFDocument(currentState);
-			const blob = doc.output('blob');
 
-			if (previewUrl) URL.revokeObjectURL(previewUrl);
-			previewUrl = URL.createObjectURL(blob);
+		const updatePreview = async () => {
+			try {
+				const pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs');
+
+				if (!pdfjs.GlobalWorkerOptions.workerPort) {
+					pdfjs.GlobalWorkerOptions.workerPort = new PDFWorker();
+				}
+
+				const doc = createPDFDocument(currentState);
+				const pdfData = doc.output('arraybuffer');
+
+				const loadingTask = pdfjs.getDocument({ data: pdfData });
+				const pdf = await loadingTask.promise;
+				const page = await pdf.getPage(1);
+
+				const viewport = page.getViewport({ scale: 1.5 });
+				const canvas = document.createElement('canvas');
+				const context = canvas.getContext('2d');
+
+				if (!context) return;
+				canvas.height = viewport.height;
+				canvas.width = viewport.width;
+
+				await page.render({ canvasContext: context, viewport }).promise;
+
+				if (previewUrl) URL.revokeObjectURL(previewUrl);
+				previewUrl = canvas.toDataURL('image/png');
+			} catch (err) {
+				console.error('Preview generation failed:', err);
+			}
 		};
 
-		const timer = setTimeout(updatePreview, 150);
+		const timer = setTimeout(updatePreview, 250);
 		return () => clearTimeout(timer);
 	});
-
 	function download() {
 		if (!browser) return;
 		const doc = createPDFDocument($state.snapshot(state));
@@ -182,10 +205,10 @@
 		</div>
 	</section>
 
-	<section class="sticky top-6 h-[calc(100vh-120px)] min-h-[600px]">
+	<section class="sticky top-6 min-h-[600px]">
 		<Card.Root class="h-full overflow-hidden border-2">
 			{#if previewUrl}
-				<iframe src={previewUrl} title="PDF Preview" class="h-full w-full"></iframe>
+				<img src={previewUrl} alt="Preview" class="max-h-full w-auto shadow-lg" />
 			{:else}
 				<div class="flex h-full items-center justify-center text-muted-foreground">
 					Generating preview...
