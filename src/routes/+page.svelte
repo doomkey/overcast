@@ -3,6 +3,7 @@
 	import { createPDFDocument } from '$lib/functions/pdfGenerator';
 	import PDFWorker from 'pdfjs-dist/legacy/build/pdf.worker.mjs?worker';
 	import * as Card from '$lib/components/ui/card';
+	import * as Accordion from '$lib/components/ui/accordion';
 	import { Input } from '$lib/components/ui/input';
 	import { Switch } from '$lib/components/ui/switch';
 	import { Button } from '$lib/components/ui/button';
@@ -22,6 +23,7 @@
 		submittedBy: { value: '', visible: true, placeholder: 'Student Name' },
 		studentId: { value: '', visible: true, placeholder: 'ID Number' },
 		regNo: { value: '', visible: true, placeholder: 'Registration No' },
+		session: { value: '', visible: true, placeholder: 'Session' },
 		date: { value: '', visible: true, placeholder: 'Submission Date' }
 	});
 	let conditions = $state({
@@ -94,8 +96,8 @@
 	</div>
 </nav>
 
-<main class="container mx-auto grid grid-cols-1 gap-8 p-6 lg:grid-cols-2">
-	<section class="space-y-6">
+<main class="container mx-auto">
+	<section class="grid grid-cols-1 gap-8 space-y-6 p-6 lg:grid-cols-2">
 		<Card.Root>
 			<Card.Header>
 				<Card.Title>Assignment Details</Card.Title>
@@ -178,36 +180,51 @@
 				<Button class="w-full" onclick={download}>Download PDF</Button>
 			</Card.Content>
 		</Card.Root>
+		<section class=" top-6 min-h-[600px]">
+			<Card.Root class="h-full overflow-hidden border-2">
+				{#if previewUrl}
+					<img src={previewUrl} alt="Preview" class="max-h-full w-auto shadow-lg" />
+				{:else}
+					<div class="flex h-full items-center justify-center text-muted-foreground">
+						Generating preview...
+					</div>
+				{/if}
+			</Card.Root>
+		</section>
+		<Card.Root>
+			<Card.Header>
+				<h3 class="text-lg font-bold">FAQ</h3>
+			</Card.Header>
+			<Card.Content>
+				<Accordion.Root class="w-full">
+					<Accordion.Item value="how-to-use">
+						<Accordion.Trigger class="font-medium">How to use this?</Accordion.Trigger>
+						<Accordion.Content class="text-sm text-muted-foreground">
+							Just fill in the input boxes. The preview updates automatically.
+						</Accordion.Content>
+					</Accordion.Item>
 
-		<div class="space-y-4">
-			<h3 class="text-lg font-bold">FAQ</h3>
-			<div class="space-y-2">
-				<details class="rounded-lg border bg-card p-4 text-card-foreground shadow-sm">
-					<summary class="cursor-pointer font-medium">How to use this?</summary>
-					<p class="mt-2 text-sm text-muted-foreground">
-						Just fill in the input boxes. The preview on the right (or bottom) updates
-						automatically.
-					</p>
-				</details>
-				<details class="rounded-lg border bg-card p-4 text-card-foreground shadow-sm">
-					<summary class="cursor-pointer font-medium">Can I hide fields?</summary>
-					<p class="mt-2 text-sm text-muted-foreground">
-						Yes, use the toggle switches next to each input to hide specific lines from the PDF.
-					</p>
-				</details>
-			</div>
-		</div>
-	</section>
-
-	<section class="sticky top-6 min-h-[600px]">
-		<Card.Root class="h-full overflow-hidden border-2">
-			{#if previewUrl}
-				<img src={previewUrl} alt="Preview" class="max-h-full w-auto shadow-lg" />
-			{:else}
-				<div class="flex h-full items-center justify-center text-muted-foreground">
-					Generating preview...
-				</div>
-			{/if}
+					<Accordion.Item value="hide-fields">
+						<Accordion.Trigger class="font-medium">Can I hide fields?</Accordion.Trigger>
+						<Accordion.Content class="text-sm text-muted-foreground">
+							Yes, use the toggle switches next to each input to hide specific data.
+						</Accordion.Content>
+					</Accordion.Item>
+				</Accordion.Root>
+			</Card.Content>
+		</Card.Root>
+		<Card.Root>
+			<Card.Header>
+				<Card.Title>
+					<h3 class="text-lg font-bold">Roadmap</h3>
+				</Card.Title>
+			</Card.Header>
+			<Card.Content>
+				<ol>
+					<li>Templates</li>
+					<li>Fonts</li>
+				</ol>
+			</Card.Content>
 		</Card.Root>
 	</section>
 </main>

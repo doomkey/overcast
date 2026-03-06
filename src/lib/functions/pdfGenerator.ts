@@ -76,6 +76,11 @@ export function createPDFDocument(state: CoverState) {
 		if (state.regNo.visible) {
 			doc.text('Reg. No', labelX, y);
 			doc.text(`: ${getVal(state.regNo)}`, valueX, y);
+			y += 7;
+		}
+		if (state.session.visible) {
+			doc.text('Session', labelX, y);
+			doc.text(`: ${getVal(state.session)}`, valueX, y);
 		}
 	}
 

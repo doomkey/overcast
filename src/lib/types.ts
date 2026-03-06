@@ -14,5 +14,6 @@ export interface CoverState {
 	submittedBy: Field;
 	studentId: Field;
 	regNo: Field;
+	session: Field;
 	date: Field;
 }
