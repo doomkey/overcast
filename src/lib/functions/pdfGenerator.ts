@@ -1,102 +1,160 @@
-import { jsPDF } from 'jspdf';
-import type { CoverState } from '../types';
-import { tinosNormal, tinosBold } from '$lib/assets/fonts';
+import pdfMake from 'pdfmake/build/pdfmake';
+import * as vfs from '$lib/assets/fonts/vfs_fonts';
+import type { CoverState } from '$lib/types';
+
+(pdfMake as any).vfs = vfs;
+
+pdfMake.addFonts({
+	Tinos: {
+		normal: 'Tinos-Regular.ttf',
+		bold: 'Tinos-Bold.ttf',
+		italics: 'Tinos-Italic.ttf',
+		bolditalics: 'Tinos-BoldItalic.ttf'
+	}
+});
 export function createPDFDocument(state: CoverState) {
-	const doc = new jsPDF();
-	doc.addFileToVFS('Tinos-Regular.ttf', tinosNormal);
-	doc.addFont('Tinos-Regular.ttf', 'tinos', 'normal');
-
-	doc.addFileToVFS('Tinos-Bold.ttf', tinosBold);
-	doc.addFont('Tinos-Bold.ttf', 'tinos', 'bold');
-
-	doc.setFont('tinos');
-	const pageWidth = doc.internal.pageSize.getWidth();
-	const centerX = pageWidth / 2;
-
 	const getVal = (field: { value: string; placeholder: string }) =>
 		field.value.trim() !== '' ? field.value : field.placeholder;
 
-	doc.setLineWidth(0.5);
-	doc.line(20, 45, pageWidth - 20, 45);
-	doc.line(20, 65, pageWidth - 20, 65);
+	const pt = (mm: number) => mm * 2.83465;
+	const ptY = (mm: number, fontSize: number = 12) => pt(mm - fontSize * 0.25);
 
-	if (state.subtitle.visible) {
-		doc.setFont('tinos', 'bold').setFontSize(12);
-		doc.text(getVal(state.subtitle), centerX, 40, { align: 'center' });
-	}
+	const content: any[] = [];
 
-	if (state.title.visible) {
-		doc.setFont('tinos', 'bold').setFontSize(18);
-		doc.text(getVal(state.title), centerX, 55, { align: 'center' });
-	}
-
-	const showTo =
-		state.submittedTo.visible ||
-		state.designation.visible ||
-		state.dept.visible ||
-		state.varsity.visible;
-
-	if (showTo) {
-		doc.setFont('tinos', 'bold').setFontSize(12);
-		doc.text('Submitted to:', centerX, 110, { align: 'center' });
-
-		doc.setFont('tinos', 'normal');
-		let y = 118;
-		const fieldsTo: (keyof CoverState)[] = ['submittedTo', 'designation', 'dept', 'varsity'];
-
-		fieldsTo.forEach((key) => {
-			if (state[key].visible) {
-				doc.text(getVal(state[key]), centerX, y, { align: 'center' });
-				y += 7;
+	content.push({
+		margin: [pt(20), pt(45), pt(20), 0],
+		stack: [
+			{
+				canvas: [{ type: 'line', x1: 0, y1: 0, x2: pt(170), y2: 0, lineWidth: 0.5 }]
+			},
+			state.subtitle.visible
+				? {
+						text: getVal(state.subtitle),
+						bold: true,
+						fontSize: 12,
+						alignment: 'center',
+						margin: [0, pt(-10), 0, pt(5)]
+					}
+				: null,
+			state.title.visible
+				? {
+						text: getVal(state.title),
+						bold: true,
+						fontSize: 18,
+						alignment: 'center',
+						margin: [0, pt(5), 0, pt(5)]
+					}
+				: null,
+			{
+				canvas: [{ type: 'line', x1: 0, y1: 0, x2: pt(170), y2: 0, lineWidth: 0.5 }]
 			}
+		].filter(Boolean)
+	});
+
+	const showTo = [state.submittedTo, state.designation, state.dept, state.varsity].some(
+		(f) => f.visible
+	);
+	if (showTo) {
+		content.push({
+			stack: [
+				{ text: 'Submitted to:', bold: true, margin: [0, 0, 0, 8] },
+				state.submittedTo.visible ? { text: getVal(state.submittedTo) } : null,
+				state.designation.visible ? { text: getVal(state.designation) } : null,
+				state.dept.visible ? { text: getVal(state.dept) } : null,
+				state.varsity.visible ? { text: getVal(state.varsity) } : null
+			].filter(Boolean),
+			alignment: 'center',
+			margin: [0, pt(40), 0, 0]
 		});
 	}
 
-	const showBy = state.submittedBy.visible || state.studentId.visible || state.regNo.visible;
+	const showBy = [state.submittedBy, state.studentId, state.regNo, state.session].some(
+		(f) => f.visible
+	);
 
 	if (showBy) {
-		doc.setFont('tinos', 'bold');
-		doc.text('Submitted by:', centerX, 165, { align: 'center' });
+		const tableRows = [];
 
-		doc.setFont('tinos', 'normal');
-		const labelX = centerX - 25;
-		const valueX = centerX - 5;
-		let y = 175;
+		const addRow = (label: string, value: string) => {
+			tableRows.push([
+				{ text: label, noWrap: true },
+				{ text: ':', noWrap: true },
+				{ text: value, noWrap: true }
+			]);
+		};
 
-		if (state.submittedBy.visible) {
-			doc.text('Name', labelX, y);
-			doc.text(`: ${getVal(state.submittedBy)}`, valueX, y);
-			y += 7;
-		}
-		if (state.studentId.visible) {
-			doc.text('ID', labelX, y);
-			doc.text(`: ${getVal(state.studentId)}`, valueX, y);
-			y += 7;
-		}
-		if (state.regNo.visible) {
-			doc.text('Reg. No', labelX, y);
-			doc.text(`: ${getVal(state.regNo)}`, valueX, y);
-			y += 7;
-		}
-		if (state.session.visible) {
-			doc.text('Session', labelX, y);
-			doc.text(`: ${getVal(state.session)}`, valueX, y);
-		}
+		if (state.submittedBy.visible) addRow('Name', getVal(state.submittedBy));
+		if (state.studentId.visible) addRow('ID', getVal(state.studentId));
+		if (state.regNo.visible) addRow('Reg. No', getVal(state.regNo));
+		if (state.session.visible) addRow('Session', getVal(state.session));
+
+		content.push({
+			margin: [0, pt(25), 0, 0],
+			stack: [
+				{
+					text: 'Submitted by:',
+					bold: true,
+					margin: [0, 0, 0, 8],
+					alignment: 'center'
+				},
+				{
+					table: {
+						widths: ['*', 'auto', '*'],
+						body: [
+							[
+								'',
+								{
+									table: {
+										widths: [pt(20), 1, 'auto'],
+										body: tableRows
+									},
+									layout: 'noBorders'
+								},
+								''
+							]
+						]
+					},
+					layout: 'noBorders'
+				}
+			]
+		});
 	}
 
 	if (state.date.visible) {
-		doc.setFont('tinos', 'normal').setFontSize(12);
-		const dateText = state.date.value ? state.date.value : '_____________________';
-		doc.text(`Submission date: ${dateText}`, centerX, 220, { align: 'center' });
+		content.push({
+			text: `Submission date: ${state.date.value || '_____________________'}`,
+			alignment: 'center',
+			absolutePosition: { x: 0, y: ptY(250, 12) }
+		});
 	}
 
 	if (state.dept_bottom.visible) {
-		doc.setFont('tinos', 'normal').setFontSize(12);
-		doc.text(getVal(state.dept_bottom), centerX, 275, { align: 'center' });
+		content.push({
+			text: getVal(state.dept_bottom),
+			alignment: 'center',
+			absolutePosition: { x: 0, y: ptY(275, 12) }
+		});
 	}
+
 	if (state.varsity_bottom.visible) {
-		doc.setFont('tinos', 'bold').setFontSize(16);
-		doc.text(getVal(state.varsity_bottom), centerX, 282, { align: 'center' });
+		content.push({
+			text: getVal(state.varsity_bottom),
+			bold: true,
+			fontSize: 16,
+			alignment: 'center',
+			absolutePosition: { x: 0, y: ptY(282, 16) }
+		});
 	}
-	return doc;
+
+	const docDefinition = {
+		pageSize: 'A4',
+		pageMargins: [0, 0, 0, 0],
+		defaultStyle: {
+			font: 'Tinos',
+			fontSize: 12
+		},
+		content
+	};
+
+	return pdfMake.createPdf(docDefinition as any);
 }

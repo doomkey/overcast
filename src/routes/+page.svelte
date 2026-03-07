@@ -56,22 +56,27 @@
 			try {
 				const pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs');
 
-				if (!pdfjs.GlobalWorkerOptions.workerPort) {
-					pdfjs.GlobalWorkerOptions.workerPort = new PDFWorker();
+				if (!pdfjs.GlobalWorkerOptions.workerSrc) {
+					const worker = await import('pdfjs-dist/legacy/build/pdf.worker.mjs?url');
+					pdfjs.GlobalWorkerOptions.workerSrc = worker.default;
 				}
 
-				const doc = createPDFDocument(currentState);
-				const pdfData = doc.output('arraybuffer');
+				const pdfDocGenerator = createPDFDocument(currentState);
+				const pdfData = await pdfDocGenerator.getBuffer();
 
-				const loadingTask = pdfjs.getDocument({ data: pdfData });
+				const loadingTask = pdfjs.getDocument({
+					data: pdfData,
+					isEvalSupported: false
+				});
+
 				const pdf = await loadingTask.promise;
 				const page = await pdf.getPage(1);
 
 				const viewport = page.getViewport({ scale: 1.5 });
 				const canvas = document.createElement('canvas');
 				const context = canvas.getContext('2d');
-
 				if (!context) return;
+
 				canvas.height = viewport.height;
 				canvas.width = viewport.width;
 
@@ -80,7 +85,7 @@
 				if (previewUrl) URL.revokeObjectURL(previewUrl);
 				previewUrl = canvas.toDataURL('image/png');
 			} catch (err) {
-				console.error('Preview generation failed:', err);
+				console.error('Minimal Preview Error:', err);
 			}
 		};
 
@@ -90,7 +95,7 @@
 	function download() {
 		if (!browser) return;
 		const doc = createPDFDocument($state.snapshot(state));
-		doc.save(`${state.title.value || 'Cover_Page'}.pdf`);
+		doc.download(`${state.title.value || 'Cover_Page'}.pdf`);
 	}
 </script>
 

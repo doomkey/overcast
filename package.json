@@ -25,6 +25,7 @@
 		"@tailwindcss/typography": "^0.5.19",
 		"@tailwindcss/vite": "^4.1.18",
 		"@types/node": "^24",
+		"@types/pdfmake": "^0.3.2",
 		"bits-ui": "^2.16.3",
 		"clsx": "^2.1.1",
 		"eslint": "^9.39.2",
@@ -45,7 +46,7 @@
 		"vite": "^7.3.1"
 	},
 	"dependencies": {
-		"jspdf": "^4.2.0",
-		"pdfjs-dist": "^5.5.207"
+		"pdfjs-dist": "^5.5.207",
+		"pdfmake": "^0.3.5"
 	}
 }
