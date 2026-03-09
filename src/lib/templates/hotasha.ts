@@ -29,7 +29,7 @@ export const hotashaCoverTemplate = (state: CoverState, font: string) => {
 			},
 
 			{
-				margin: [pt(25), pt(110), pt(25), 0],
+				margin: [pt(25), pt(80), pt(25), 0],
 				columns: [
 					buildSubmittedToBlock(state) || { text: '' },
 					{

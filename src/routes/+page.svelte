@@ -12,7 +12,10 @@
 	import * as Select from '$lib/components/ui/select/index.js';
 	import { Label } from '$lib/components/ui/label';
 	import Roadmap from '$lib/components/Roadmap.svelte';
+	import * as Field from '$lib/components/ui/field/index.js';
 	import FAQ from '$lib/components/FAQ.svelte';
+	import TemplateSelector from '$lib/components/TemplateSelector.svelte';
+	//@ts-ignore
 	let state = $state({
 		subtitle: { value: '', visible: true, placeholder: 'A report on' },
 		title: { value: '', visible: true, placeholder: 'Title of the document' },
@@ -33,6 +36,7 @@
 		date: { value: '', visible: true, placeholder: 'Submission Date' }
 	});
 	let font = $state(fonts.TINOS.value);
+	let template = $state(templates.OMABOSSA.value);
 	let conditions = $state({
 		varsity: true,
 		dept: true
@@ -53,6 +57,7 @@
 
 		const currentState = $state.snapshot(state);
 		const currentFont = $state.snapshot(font);
+		const currentTemplate = $state.snapshot(template);
 		const updatePreview = async () => {
 			try {
 				const pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs');
@@ -62,7 +67,7 @@
 					pdfjs.GlobalWorkerOptions.workerSrc = worker.default;
 				}
 
-				const pdfDocGenerator = createPDFDocument(templates.OMANISHA, currentState, currentFont);
+				const pdfDocGenerator = createPDFDocument(currentTemplate, currentState, currentFont);
 				const pdfData = await pdfDocGenerator.getBuffer();
 
 				const loadingTask = pdfjs.getDocument({
@@ -95,12 +100,19 @@
 	});
 	function download() {
 		if (!browser) return;
-		const doc = createPDFDocument($state.snapshot(state));
+		const doc = createPDFDocument(
+			$state.snapshot(template),
+			$state.snapshot(state),
+			$state.snapshot(font)
+		);
 		doc.download(`${state.title.value || 'Cover_Page'}.pdf`);
 	}
 	const triggerContent = $derived(
-		Object.values(fonts).find((f) => f.value === font)?.name ?? 'Select a fruit'
+		Object.values(fonts).find((f) => f.value === font)?.name ?? 'Select a font'
 	);
+	function templateChange(value: string) {
+		template = value;
+	}
 </script>
 
 <nav class="flex items-center justify-between border-b bg-background px-8 py-4">
@@ -112,120 +124,169 @@
 </nav>
 
 <main class="container mx-auto">
-	<section class="grid grid-cols-1 gap-8 space-y-6 p-6 lg:grid-cols-2">
+	<section class="grid grid-cols-1 items-start gap-8 space-y-6 py-6 lg:grid-cols-2">
 		<Card.Root>
 			<Card.Header>
 				<Card.Title>Assignment Details</Card.Title>
 				<Card.Description>Fill in the details to update the cover page preview.</Card.Description>
 			</Card.Header>
-			<Card.Content class="space-y-6">
-				<div class="space-y-4">
-					<div class="flex items-center gap-4">
-						<Input
-							bind:value={state.subtitle.value}
-							placeholder={state.subtitle.placeholder}
-							disabled={!state.subtitle.visible}
-						/>
-						<Switch bind:checked={state.subtitle.visible} />
-					</div>
-					<div class="flex items-center gap-4">
-						<Input
-							bind:value={state.title.value}
-							placeholder={state.title.placeholder}
-							disabled={!state.title.visible}
-						/>
-						<Switch bind:checked={state.title.visible} />
-					</div>
-				</div>
+			<Card.Content>
+				<Field.Group>
+					<Field.Set>
+						<Field.Group>
+							<Field.Field orientation="horizontal">
+								<Input
+									bind:value={state.subtitle.value}
+									placeholder={state.subtitle.placeholder}
+									disabled={!state.subtitle.visible}
+								/>
+								<Switch bind:checked={state.subtitle.visible} aria-label="Toggle Subtitle" />
+							</Field.Field>
+							<Field.Field orientation="horizontal">
+								<Input
+									bind:value={state.title.value}
+									placeholder={state.title.placeholder}
+									disabled={!state.title.visible}
+								/>
+								<Switch bind:checked={state.title.visible} aria-label="Toggle Title" />
+							</Field.Field>
+						</Field.Group>
+					</Field.Set>
 
-				<Separator />
+					<Field.Set>
+						<Field.Legend>Submitted to</Field.Legend>
+						<Field.Group>
+							{#each ['submittedTo', 'designation', 'dept', 'varsity'] as key}
+								{@const field = state[key as keyof typeof state]}
+								<Field.Field orientation="horizontal">
+									<Input
+										bind:value={field.value}
+										placeholder={field.placeholder}
+										disabled={!field.visible}
+									/>
+									<Switch bind:checked={field.visible} aria-label={`Toggle ${field.placeholder}`} />
+								</Field.Field>
+							{/each}
+						</Field.Group>
+					</Field.Set>
 
-				<div class="space-y-4">
-					<h4 class="text-sm leading-none font-medium">Submitted to</h4>
-					{#each ['submittedTo', 'designation', 'dept', 'varsity'] as key}
-						{@const field = state[key as keyof typeof state]}
-						<div class="flex items-center gap-4">
-							<Input
-								bind:value={field.value}
-								placeholder={field.placeholder}
-								disabled={!field.visible}
-							/>
-							<Switch bind:checked={field.visible} />
-						</div>
-					{/each}
-				</div>
+					<Field.Set>
+						<Field.Legend>Submitted by</Field.Legend>
+						<Field.Group>
+							{#each ['submittedBy', 'studentId', 'regNo', 'session', 'date'] as key}
+								{@const field = state[key as keyof typeof state]}
+								<Field.Field orientation="horizontal">
+									<Input
+										bind:value={field.value}
+										placeholder={field.placeholder}
+										disabled={!field.visible}
+									/>
+									<Switch bind:checked={field.visible} aria-label={`Toggle ${field.placeholder}`} />
+								</Field.Field>
+							{/each}
+						</Field.Group>
+					</Field.Set>
 
-				<Separator />
+					<Field.Set>
+						<Field.Legend>Institution Information</Field.Legend>
+						<Field.Group class="gap-6">
+							<Field.Group>
+								<Field.Field orientation="horizontal">
+									<Input
+										placeholder="Department name"
+										disabled={conditions.dept || !state.dept_bottom.visible}
+										bind:value={state.dept_bottom.value}
+									/>
+									<Switch
+										bind:checked={state.dept_bottom.visible}
+										aria-label="Toggle Bottom Department"
+									/>
+								</Field.Field>
+								<Field.Field orientation="horizontal">
+									<Checkbox id="department-same" bind:checked={conditions.dept} />
+									<Field.Label
+										for="department-same"
+										class="text-xs font-normal text-muted-foreground"
+									>
+										Same as teacher's department
+									</Field.Label>
+								</Field.Field>
+							</Field.Group>
 
-				<div class="space-y-4">
-					<h4 class="text-sm leading-none font-medium">Submitted by</h4>
-					{#each ['submittedBy', 'studentId', 'regNo', 'session', 'date'] as key}
-						{@const field = state[key as keyof typeof state]}
-						<div class="flex items-center gap-4">
-							<Input bind:value={field.value} placeholder={field.placeholder} />
-							<Switch bind:checked={field.visible} />
-						</div>
-					{/each}
-				</div>
-				<div class="space-y-4">
-					<h4 class="text-sm leading-none font-medium">Institution Information</h4>
-					<div class="space-y-4">
-						<div class="flex items-center gap-4">
-							<Input
-								placeholder="Department name"
-								disabled={conditions.dept}
-								bind:value={state.dept_bottom.value}
-							/>
-							<Switch bind:checked={state.dept_bottom.visible} />
-						</div>
-						<div class="flex items-center gap-3">
-							<Checkbox id="department-same" bind:checked={conditions.dept} />
-							<Label for="department-same">Same as teacher's department</Label>
-						</div>
-					</div>
-					<div class="space-y-4">
-						<div class="flex items-center gap-4">
-							<Input
-								placeholder="Name of the Institute"
-								bind:value={state.varsity_bottom.value}
-								disabled={conditions.varsity}
-							/>
-							<Switch bind:checked={state.varsity_bottom.visible} />
-						</div>
-						<div class="flex items-center gap-3">
-							<Checkbox id="institute-same" bind:checked={conditions.varsity} />
-							<Label for="institute-same">Same as teacher's institute</Label>
-						</div>
-					</div>
-					<Select.Root type="single" name="font" bind:value={font}>
-						<Select.Trigger class="w-[180px]">{triggerContent}</Select.Trigger>
-						<Select.Content>
-							<Select.Group>
-								<Select.Label>Font</Select.Label>
-								{#each Object.values(fonts) as font}
-									<Select.Item value={font.value} label={font.name}>
-										{font.name}
-									</Select.Item>
-								{/each}
-							</Select.Group>
-						</Select.Content>
-					</Select.Root>
-				</div>
-				<Button class="w-full" onclick={download}>Download PDF</Button>
+							<Field.Group>
+								<Field.Field orientation="horizontal">
+									<Input
+										placeholder="Name of the Institute"
+										bind:value={state.varsity_bottom.value}
+										disabled={conditions.varsity || !state.varsity_bottom.visible}
+									/>
+									<Switch
+										bind:checked={state.varsity_bottom.visible}
+										aria-label="Toggle Bottom Institute"
+									/>
+								</Field.Field>
+								<Field.Field orientation="horizontal">
+									<Checkbox id="institute-same" bind:checked={conditions.varsity} />
+									<Field.Label
+										for="institute-same"
+										class="text-xs font-normal text-muted-foreground"
+									>
+										Same as teacher's institute
+									</Field.Label>
+								</Field.Field>
+							</Field.Group>
+						</Field.Group>
+					</Field.Set>
+					<Field.Set>
+						<Field.Legend>Customization</Field.Legend>
+						<Field.Group>
+							<Field.Field>
+								<Field.Label>Document Font</Field.Label>
+								<Select.Root type="single" name="font" bind:value={font}>
+									<Select.Trigger class="w-full">
+										{triggerContent}
+									</Select.Trigger>
+									<Select.Content>
+										<Select.Group>
+											{#each Object.values(fonts) as f}
+												<Select.Item value={f.value} label={f.name}>
+													{f.name}
+												</Select.Item>
+											{/each}
+										</Select.Group>
+									</Select.Content>
+								</Select.Root>
+							</Field.Field>
+							<Field.Field>
+								<Field.Label>Template</Field.Label>
+								<TemplateSelector onSelect={templateChange} starting={template} />
+							</Field.Field>
+						</Field.Group>
+					</Field.Set>
+
+					<Button class="mt-4 w-full" onclick={download}>Download PDF</Button>
+				</Field.Group>
 			</Card.Content>
 		</Card.Root>
-		<section class=" top-6 min-h-[600px]">
-			<Card.Root class="h-full overflow-hidden border-2">
+		<section class="sticky top-0 flex h-screen items-start justify-center p-0">
+			<Card.Root
+				class="flex h-full w-full flex-col items-center justify-center overflow-hidden border-2 bg-muted/20 p-6"
+			>
 				{#if previewUrl}
-					<img src={previewUrl} alt="Preview" class="max-h-full w-auto shadow-lg" />
+					<div class="relative flex h-full w-full items-center justify-center">
+						<img
+							src={previewUrl}
+							alt="Preview"
+							class="max-h-full max-w-full rounded-sm border bg-white object-contain shadow-2xl transition-all hover:scale-[1.01]"
+						/>
+					</div>
 				{:else}
-					<div class="flex h-full items-center justify-center text-muted-foreground">
-						Generating preview...
+					<div class="flex h-full items-center justify-center text-muted-foreground italic">
+						<span class="animate-pulse">Generating preview...</span>
 					</div>
 				{/if}
 			</Card.Root>
 		</section>
-		<FAQ />
-		<Roadmap />
 	</section>
+	<FAQ />
 </main>
