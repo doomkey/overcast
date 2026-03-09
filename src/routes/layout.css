@@ -1,5 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
 @import 'tailwindcss';
-
 @import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
@@ -164,7 +164,10 @@
 	--shadow-xl: var(--shadow-xl);
 	--shadow-2xl: var(--shadow-2xl);
 }
-
+:root {
+	--font-mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+	--default-font-family: var(--font-mono);
+}
 @layer base {
 	* {
 		@apply border-border outline-ring/50;
