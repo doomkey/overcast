@@ -36,7 +36,7 @@
 		date: { value: '', visible: true, placeholder: 'Submission Date' }
 	});
 	let font = $state(fonts.TINOS.value);
-	let template = $state(templates.OMABOSSA.value);
+	let template = $state(templates.OMANISHA.value);
 	let conditions = $state({
 		varsity: true,
 		dept: true
