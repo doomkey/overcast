@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { createPDFDocument } from '$lib/functions/pdfGenerator';
+	import { createPDFDocument, fonts, templates } from '$lib/functions/pdfGenerator';
 	import PDFWorker from 'pdfjs-dist/legacy/build/pdf.worker.mjs?worker';
 	import * as Card from '$lib/components/ui/card';
 	import * as Accordion from '$lib/components/ui/accordion';
@@ -9,10 +9,10 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Separator } from '$lib/components/ui/separator';
 	import { Checkbox } from '$lib/components/ui/checkbox';
+	import * as Select from '$lib/components/ui/select/index.js';
 	import { Label } from '$lib/components/ui/label';
 	import Roadmap from '$lib/components/Roadmap.svelte';
 	import FAQ from '$lib/components/FAQ.svelte';
-
 	let state = $state({
 		subtitle: { value: '', visible: true, placeholder: 'A report on' },
 		title: { value: '', visible: true, placeholder: 'Title of the document' },
@@ -32,6 +32,7 @@
 		session: { value: '', visible: true, placeholder: 'Session' },
 		date: { value: '', visible: true, placeholder: 'Submission Date' }
 	});
+	let font = $state(fonts.TINOS.value);
 	let conditions = $state({
 		varsity: true,
 		dept: true
@@ -51,7 +52,7 @@
 		if (!browser) return;
 
 		const currentState = $state.snapshot(state);
-
+		const currentFont = $state.snapshot(font);
 		const updatePreview = async () => {
 			try {
 				const pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs');
@@ -61,7 +62,7 @@
 					pdfjs.GlobalWorkerOptions.workerSrc = worker.default;
 				}
 
-				const pdfDocGenerator = createPDFDocument(currentState);
+				const pdfDocGenerator = createPDFDocument(templates.OMANISHA, currentState, currentFont);
 				const pdfData = await pdfDocGenerator.getBuffer();
 
 				const loadingTask = pdfjs.getDocument({
@@ -79,7 +80,7 @@
 
 				canvas.height = viewport.height;
 				canvas.width = viewport.width;
-
+				//@ts-ignore
 				await page.render({ canvasContext: context, viewport }).promise;
 
 				if (previewUrl) URL.revokeObjectURL(previewUrl);
@@ -97,6 +98,9 @@
 		const doc = createPDFDocument($state.snapshot(state));
 		doc.download(`${state.title.value || 'Cover_Page'}.pdf`);
 	}
+	const triggerContent = $derived(
+		Object.values(fonts).find((f) => f.value === font)?.name ?? 'Select a fruit'
+	);
 </script>
 
 <nav class="flex items-center justify-between border-b bg-background px-8 py-4">
@@ -193,6 +197,19 @@
 							<Label for="institute-same">Same as teacher's institute</Label>
 						</div>
 					</div>
+					<Select.Root type="single" name="font" bind:value={font}>
+						<Select.Trigger class="w-[180px]">{triggerContent}</Select.Trigger>
+						<Select.Content>
+							<Select.Group>
+								<Select.Label>Font</Select.Label>
+								{#each Object.values(fonts) as font}
+									<Select.Item value={font.value} label={font.name}>
+										{font.name}
+									</Select.Item>
+								{/each}
+							</Select.Group>
+						</Select.Content>
+					</Select.Root>
 				</div>
 				<Button class="w-full" onclick={download}>Download PDF</Button>
 			</Card.Content>
