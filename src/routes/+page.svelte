@@ -16,28 +16,64 @@
 	import FAQ from '$lib/components/FAQ.svelte';
 	import TemplateSelector from '$lib/components/TemplateSelector.svelte';
 	import Autocomplete from '$lib/components/Autocomplete.svelte';
-	import { savedData, persistSavedData } from '$lib/stores/saved_data.svelte';
+	import { savedData } from '$lib/stores/saved_data.svelte';
 	//@ts-ignore
 	let state = $state({
-		course_code: { value: '', visible: true, placeholder: 'Course code' },
-		course_title: { value: '', visible: true, placeholder: 'Course title' },
-		subtitle: { value: '', visible: false, placeholder: 'A report on' },
-		title: { value: '', visible: true, placeholder: 'Title of the document' },
-		submittedTo: { value: '', visible: true, placeholder: 'Name of the professor' },
-		designation: { value: '', visible: true, placeholder: 'Designation' },
-		dept: { value: 'Department of ', visible: true, placeholder: 'Department Name' },
-		dept_bottom: { value: '', visible: true, placeholder: 'Department Name' },
+		course_code: { value: '', visible: true, placeholder: 'Course code', label: 'Course Code' },
+		course_title: { value: '', visible: true, placeholder: 'Course title', label: 'Course Title' },
+		subtitle: { value: '', visible: false, placeholder: 'A report on', label: 'Subtitle/Topic' },
+		title: {
+			value: '',
+			visible: true,
+			placeholder: 'Title of the document',
+			label: 'Document Title'
+		},
+		submittedTo: {
+			value: '',
+			visible: true,
+			placeholder: 'Name of the teacher',
+			label: 'Teacher Name'
+		},
+		designation: {
+			value: '',
+			visible: true,
+			placeholder: 'Professor, Lecturer etc',
+			label: 'Teacher Designation'
+		},
+		dept: {
+			value: 'Department of ',
+			visible: true,
+			placeholder: 'Department of',
+			label: 'Department Name'
+		},
+		dept_bottom: {
+			value: '',
+			visible: true,
+			placeholder: 'Department Name',
+			label: 'Department'
+		},
 		varsity: {
 			value: 'Patuakhali Science and Technology University',
 			visible: true,
-			placeholder: 'Name of the Institution'
+			placeholder: 'University of',
+			label: 'Institution Name'
 		},
-		varsity_bottom: { value: '', visible: true, placeholder: 'Name of the Institution' },
-		submittedBy: { value: '', visible: true, placeholder: 'Student Name' },
-		studentId: { value: '', visible: true, placeholder: 'ID Number' },
-		regNo: { value: '', visible: true, placeholder: 'Registration No' },
-		session: { value: '', visible: true, placeholder: 'Session' },
-		date: { value: '', visible: true, placeholder: 'Submission Date' }
+		varsity_bottom: {
+			value: '',
+			visible: true,
+			placeholder: 'Name of the Institution',
+			label: 'Institution Name'
+		},
+		submittedBy: { value: '', visible: true, placeholder: 'Student Name', label: 'Student Name' },
+		studentId: { value: '', visible: true, placeholder: 'ID Number', label: 'Student ID' },
+		regNo: {
+			value: '',
+			visible: true,
+			placeholder: 'Registration No.',
+			label: 'Registration Number'
+		},
+		session: { value: '', visible: true, placeholder: 'Session', label: 'Academic Session' },
+		date: { value: '', visible: true, placeholder: 'Submission Date', label: 'Date of Submission' }
 	});
 	let font = $state(fonts.TINOS.value);
 	let template = $state(templates.OMANISHA.value);
@@ -148,41 +184,53 @@
 				<Field.Group>
 					<Field.Set>
 						<Field.Group>
-							<Field.Field orientation="horizontal">
-								<Autocomplete
-									bind:value={state.subtitle.value}
-									placeholder={state.subtitle.placeholder}
-									disabled={!state.subtitle.visible}
-									bind:history={savedData.subtitle}
-								/>
-								<Switch bind:checked={state.subtitle.visible} aria-label="Toggle Subtitle" />
+							<Field.Field>
+								<Field.Label class="text-muted-foreground">{state.subtitle.label}</Field.Label>
+								<div class="flex items-center gap-2">
+									<Autocomplete
+										bind:value={state.subtitle.value}
+										placeholder={state.subtitle.placeholder}
+										disabled={!state.subtitle.visible}
+										bind:history={savedData.subtitle}
+									/>
+									<Switch bind:checked={state.subtitle.visible} aria-label="Toggle Subtitle" />
+								</div>
 							</Field.Field>
-							<Field.Field orientation="horizontal">
-								<Autocomplete
-									bind:value={state.title.value}
-									placeholder={state.title.placeholder}
-									disabled={!state.title.visible}
-									bind:history={savedData.title}
-								/>
-								<Switch bind:checked={state.title.visible} aria-label="Toggle Title" />
+							<Field.Field>
+								<Field.Label class="text-muted-foreground">{state.title.label}</Field.Label>
+								<div class="flex items-center gap-2">
+									<Autocomplete
+										bind:value={state.title.value}
+										placeholder={state.title.placeholder}
+										disabled={!state.title.visible}
+										bind:history={savedData.title}
+									/>
+									<Switch bind:checked={state.title.visible} aria-label="Toggle Title" />
+								</div>
 							</Field.Field>
-							<Field.Field orientation="horizontal">
-								<Autocomplete
-									bind:value={state.course_code.value}
-									placeholder={state.course_code.placeholder}
-									disabled={!state.course_code.visible}
-									bind:history={savedData.course_code}
-								/>
-								<Switch bind:checked={state.course_code.visible} aria-label="Toggle Title" />
+							<Field.Field>
+								<Field.Label class="text-muted-foreground">{state.course_code.label}</Field.Label>
+								<div class="flex items-center gap-2">
+									<Autocomplete
+										bind:value={state.course_code.value}
+										placeholder={state.course_code.placeholder}
+										disabled={!state.course_code.visible}
+										bind:history={savedData.course_code}
+									/>
+									<Switch bind:checked={state.course_code.visible} aria-label="Toggle Title" />
+								</div>
 							</Field.Field>
-							<Field.Field orientation="horizontal">
-								<Autocomplete
-									bind:value={state.course_title.value}
-									placeholder={state.course_title.placeholder}
-									disabled={!state.course_title.visible}
-									bind:history={savedData.course_title}
-								/>
-								<Switch bind:checked={state.course_title.visible} aria-label="Toggle Title" />
+							<Field.Field>
+								<Field.Label class="text-muted-foreground">{state.course_title.label}</Field.Label>
+								<div class="flex items-center gap-2">
+									<Autocomplete
+										bind:value={state.course_title.value}
+										placeholder={state.course_title.placeholder}
+										disabled={!state.course_title.visible}
+										bind:history={savedData.course_title}
+									/>
+									<Switch bind:checked={state.course_title.visible} aria-label="Toggle Title" />
+								</div>
 							</Field.Field>
 						</Field.Group>
 					</Field.Set>
@@ -192,14 +240,20 @@
 						<Field.Group>
 							{#each ['submittedTo', 'designation', 'dept', 'varsity'] as key (key)}
 								{@const field = state[key as keyof typeof state]}
-								<Field.Field orientation="horizontal">
-									<Autocomplete
-										bind:value={field.value}
-										placeholder={field.placeholder}
-										disabled={!field.visible}
-										bind:history={savedData[key as keyof typeof savedData] as string[]}
-									/>
-									<Switch bind:checked={field.visible} aria-label={`Toggle ${field.placeholder}`} />
+								<Field.Field>
+									<Field.Label class="text-muted-foreground">{field.label}</Field.Label>
+									<div class="flex items-center gap-2">
+										<Autocomplete
+											bind:value={field.value}
+											placeholder={field.placeholder}
+											disabled={!field.visible}
+											bind:history={savedData[key as keyof typeof savedData] as string[]}
+										/>
+										<Switch
+											bind:checked={field.visible}
+											aria-label={`Toggle ${field.placeholder}`}
+										/>
+									</div>
 								</Field.Field>
 							{/each}
 						</Field.Group>
@@ -210,14 +264,20 @@
 						<Field.Group>
 							{#each ['submittedBy', 'studentId', 'regNo', 'session', 'date'] as key (key)}
 								{@const field = state[key as keyof typeof state]}
-								<Field.Field orientation="horizontal">
-									<Autocomplete
-										bind:value={field.value}
-										placeholder={field.placeholder}
-										disabled={!field.visible}
-										bind:history={savedData[key as keyof typeof savedData] as string[]}
-									/>
-									<Switch bind:checked={field.visible} aria-label={`Toggle ${field.placeholder}`} />
+								<Field.Field>
+									<Field.Label class="text-muted-foreground">{field.label}</Field.Label>
+									<div class="flex items-center gap-2">
+										<Autocomplete
+											bind:value={field.value}
+											placeholder={field.placeholder}
+											disabled={!field.visible}
+											bind:history={savedData[key as keyof typeof savedData] as string[]}
+										/>
+										<Switch
+											bind:checked={field.visible}
+											aria-label={`Toggle ${field.placeholder}`}
+										/>
+									</div>
 								</Field.Field>
 							{/each}
 						</Field.Group>
@@ -227,17 +287,20 @@
 						<Field.Legend>Institution Information</Field.Legend>
 						<Field.Group class="gap-6">
 							<Field.Group>
-								<Field.Field orientation="horizontal">
-									<Autocomplete
-										placeholder="Department name"
-										disabled={conditions.dept || !state.dept_bottom.visible}
-										bind:value={state.dept_bottom.value}
-										bind:history={savedData.dept_bottom}
-									/>
-									<Switch
-										bind:checked={state.dept_bottom.visible}
-										aria-label="Toggle Bottom Department"
-									/>
+								<Field.Field>
+									<Field.Label class="text-muted-foreground">{state.dept_bottom.label}</Field.Label>
+									<div class="flex items-center gap-2">
+										<Autocomplete
+											placeholder="Department name"
+											disabled={conditions.dept || !state.dept_bottom.visible}
+											bind:value={state.dept_bottom.value}
+											bind:history={savedData.dept_bottom}
+										/>
+										<Switch
+											bind:checked={state.dept_bottom.visible}
+											aria-label="Toggle Bottom Department"
+										/>
+									</div>
 								</Field.Field>
 								<Field.Field orientation="horizontal">
 									<Checkbox id="department-same" bind:checked={conditions.dept} />
@@ -251,17 +314,22 @@
 							</Field.Group>
 
 							<Field.Group>
-								<Field.Field orientation="horizontal">
-									<Autocomplete
-										placeholder="Name of the Institute"
-										bind:value={state.varsity_bottom.value}
-										disabled={conditions.varsity || !state.varsity_bottom.visible}
-										bind:history={savedData.varsity_bottom}
-									/>
-									<Switch
-										bind:checked={state.varsity_bottom.visible}
-										aria-label="Toggle Bottom Institute"
-									/>
+								<Field.Field>
+									<Field.Label class="text-muted-foreground"
+										>{state.varsity_bottom.label}</Field.Label
+									>
+									<div class="flex items-center gap-2">
+										<Autocomplete
+											placeholder="Name of the Institute"
+											bind:value={state.varsity_bottom.value}
+											disabled={conditions.varsity || !state.varsity_bottom.visible}
+											bind:history={savedData.varsity_bottom}
+										/>
+										<Switch
+											bind:checked={state.varsity_bottom.visible}
+											aria-label="Toggle Bottom Institute"
+										/>
+									</div>
 								</Field.Field>
 								<Field.Field orientation="horizontal">
 									<Checkbox id="institute-same" bind:checked={conditions.varsity} />
