@@ -175,4 +175,7 @@
 	body {
 		@apply bg-background text-foreground;
 	}
+	.container-fluid {
+		@apply mx-auto w-full p-2;
+	}
 }

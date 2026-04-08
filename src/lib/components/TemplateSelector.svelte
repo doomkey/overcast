@@ -19,8 +19,8 @@
 	}
 </script>
 
-<div class="grid w-full grid-cols-2 items-start gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-	{#each items as item}
+<div class="grid w-full grid-cols-2 items-start gap-4 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4">
+	{#each items as item (item.value)}
 		<button
 			type="button"
 			class="group relative w-full p-0 text-left transition-transform duration-200 focus:outline-none active:scale-95"
@@ -36,7 +36,7 @@
 				)}
 			>
 				<Card.Content class="relative m-0 flex flex-col p-0">
-					<div class="w-full bg-muted leading-[0]">
+					<div class="w-full bg-muted leading-0">
 						<img
 							src={item.img}
 							alt={item.name}

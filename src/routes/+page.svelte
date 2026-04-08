@@ -17,6 +17,7 @@
 	import TemplateSelector from '$lib/components/TemplateSelector.svelte';
 	import Autocomplete from '$lib/components/Autocomplete.svelte';
 	import { savedData } from '$lib/stores/saved_data.svelte';
+	import EpitomeBanner from '$lib/components/EpitomeBanner.svelte';
 	//@ts-ignore
 	let state = $state({
 		course_code: { value: '', visible: true, placeholder: 'Course code', label: 'Course Code' },
@@ -171,209 +172,218 @@
 	</div>
 </nav>
 
-<main class="container mx-auto">
-	<section class="grid grid-cols-1 items-start gap-8 space-y-6 py-6 lg:grid-cols-2">
-		<Card.Root>
-			<Card.Header>
-				<Card.Title>Assignment Details</Card.Title>
-				<Card.Description
-					>Data will be saved for future use once you download the page.</Card.Description
-				>
-			</Card.Header>
-			<Card.Content>
-				<Field.Group>
-					<Field.Set>
-						<Field.Group>
-							<Field.Field>
-								<Field.Label class="text-muted-foreground">{state.subtitle.label}</Field.Label>
-								<div class="flex items-center gap-2">
-									<Autocomplete
-										bind:value={state.subtitle.value}
-										placeholder={state.subtitle.placeholder}
-										disabled={!state.subtitle.visible}
-										bind:history={savedData.subtitle}
-									/>
-									<Switch bind:checked={state.subtitle.visible} aria-label="Toggle Subtitle" />
-								</div>
-							</Field.Field>
-							<Field.Field>
-								<Field.Label class="text-muted-foreground">{state.title.label}</Field.Label>
-								<div class="flex items-center gap-2">
-									<Autocomplete
-										bind:value={state.title.value}
-										placeholder={state.title.placeholder}
-										disabled={!state.title.visible}
-										bind:history={savedData.title}
-									/>
-									<Switch bind:checked={state.title.visible} aria-label="Toggle Title" />
-								</div>
-							</Field.Field>
-							<Field.Field>
-								<Field.Label class="text-muted-foreground">{state.course_code.label}</Field.Label>
-								<div class="flex items-center gap-2">
-									<Autocomplete
-										bind:value={state.course_code.value}
-										placeholder={state.course_code.placeholder}
-										disabled={!state.course_code.visible}
-										bind:history={savedData.course_code}
-									/>
-									<Switch bind:checked={state.course_code.visible} aria-label="Toggle Title" />
-								</div>
-							</Field.Field>
-							<Field.Field>
-								<Field.Label class="text-muted-foreground">{state.course_title.label}</Field.Label>
-								<div class="flex items-center gap-2">
-									<Autocomplete
-										bind:value={state.course_title.value}
-										placeholder={state.course_title.placeholder}
-										disabled={!state.course_title.visible}
-										bind:history={savedData.course_title}
-									/>
-									<Switch bind:checked={state.course_title.visible} aria-label="Toggle Title" />
-								</div>
-							</Field.Field>
-						</Field.Group>
-					</Field.Set>
-
-					<Field.Set>
-						<Field.Legend>Submitted to</Field.Legend>
-						<Field.Group>
-							{#each ['submittedTo', 'designation', 'dept', 'varsity'] as key (key)}
-								{@const field = state[key as keyof typeof state]}
-								<Field.Field>
-									<Field.Label class="text-muted-foreground">{field.label}</Field.Label>
-									<div class="flex items-center gap-2">
-										<Autocomplete
-											bind:value={field.value}
-											placeholder={field.placeholder}
-											disabled={!field.visible}
-											bind:history={savedData[key as keyof typeof savedData] as string[]}
-										/>
-										<Switch
-											bind:checked={field.visible}
-											aria-label={`Toggle ${field.placeholder}`}
-										/>
-									</div>
-								</Field.Field>
-							{/each}
-						</Field.Group>
-					</Field.Set>
-
-					<Field.Set>
-						<Field.Legend>Submitted by</Field.Legend>
-						<Field.Group>
-							{#each ['submittedBy', 'studentId', 'regNo', 'session', 'date'] as key (key)}
-								{@const field = state[key as keyof typeof state]}
-								<Field.Field>
-									<Field.Label class="text-muted-foreground">{field.label}</Field.Label>
-									<div class="flex items-center gap-2">
-										<Autocomplete
-											bind:value={field.value}
-											placeholder={field.placeholder}
-											disabled={!field.visible}
-											bind:history={savedData[key as keyof typeof savedData] as string[]}
-										/>
-										<Switch
-											bind:checked={field.visible}
-											aria-label={`Toggle ${field.placeholder}`}
-										/>
-									</div>
-								</Field.Field>
-							{/each}
-						</Field.Group>
-					</Field.Set>
-
-					<Field.Set>
-						<Field.Legend>Institution Information</Field.Legend>
-						<Field.Group class="gap-6">
+<main class="container-fluid">
+	<section class="grid grid-cols-1 items-start gap-4 py-6 md:grid-cols-2">
+		<section class="space-y-4">
+			<Card.Root>
+				<Card.Header>
+					<Card.Title>Assignment Details</Card.Title>
+					<Card.Description
+						>Data will be saved for future use once you download the page.</Card.Description
+					>
+				</Card.Header>
+				<Card.Content>
+					<Field.Group>
+						<Field.Set>
 							<Field.Group>
 								<Field.Field>
-									<Field.Label class="text-muted-foreground">{state.dept_bottom.label}</Field.Label>
+									<Field.Label class="text-muted-foreground">{state.subtitle.label}</Field.Label>
 									<div class="flex items-center gap-2">
 										<Autocomplete
-											placeholder="Department name"
-											disabled={conditions.dept || !state.dept_bottom.visible}
-											bind:value={state.dept_bottom.value}
-											bind:history={savedData.dept_bottom}
+											bind:value={state.subtitle.value}
+											placeholder={state.subtitle.placeholder}
+											disabled={!state.subtitle.visible}
+											bind:history={savedData.subtitle}
 										/>
-										<Switch
-											bind:checked={state.dept_bottom.visible}
-											aria-label="Toggle Bottom Department"
-										/>
+										<Switch bind:checked={state.subtitle.visible} aria-label="Toggle Subtitle" />
 									</div>
 								</Field.Field>
-								<Field.Field orientation="horizontal">
-									<Checkbox id="department-same" bind:checked={conditions.dept} />
-									<Field.Label
-										for="department-same"
-										class="text-xs font-normal text-muted-foreground"
+								<Field.Field>
+									<Field.Label class="text-muted-foreground">{state.title.label}</Field.Label>
+									<div class="flex items-center gap-2">
+										<Autocomplete
+											bind:value={state.title.value}
+											placeholder={state.title.placeholder}
+											disabled={!state.title.visible}
+											bind:history={savedData.title}
+										/>
+										<Switch bind:checked={state.title.visible} aria-label="Toggle Title" />
+									</div>
+								</Field.Field>
+								<Field.Field>
+									<Field.Label class="text-muted-foreground">{state.course_code.label}</Field.Label>
+									<div class="flex items-center gap-2">
+										<Autocomplete
+											bind:value={state.course_code.value}
+											placeholder={state.course_code.placeholder}
+											disabled={!state.course_code.visible}
+											bind:history={savedData.course_code}
+										/>
+										<Switch bind:checked={state.course_code.visible} aria-label="Toggle Title" />
+									</div>
+								</Field.Field>
+								<Field.Field>
+									<Field.Label class="text-muted-foreground">{state.course_title.label}</Field.Label
 									>
-										Same as teacher's department
-									</Field.Label>
+									<div class="flex items-center gap-2">
+										<Autocomplete
+											bind:value={state.course_title.value}
+											placeholder={state.course_title.placeholder}
+											disabled={!state.course_title.visible}
+											bind:history={savedData.course_title}
+										/>
+										<Switch bind:checked={state.course_title.visible} aria-label="Toggle Title" />
+									</div>
 								</Field.Field>
 							</Field.Group>
+						</Field.Set>
 
+						<Field.Set>
+							<Field.Legend>Submitted to</Field.Legend>
+							<Field.Group>
+								{#each ['submittedTo', 'designation', 'dept', 'varsity'] as key (key)}
+									{@const field = state[key as keyof typeof state]}
+									<Field.Field>
+										<Field.Label class="text-muted-foreground">{field.label}</Field.Label>
+										<div class="flex items-center gap-2">
+											<Autocomplete
+												bind:value={field.value}
+												placeholder={field.placeholder}
+												disabled={!field.visible}
+												bind:history={savedData[key as keyof typeof savedData] as string[]}
+											/>
+											<Switch
+												bind:checked={field.visible}
+												aria-label={`Toggle ${field.placeholder}`}
+											/>
+										</div>
+									</Field.Field>
+								{/each}
+							</Field.Group>
+						</Field.Set>
+
+						<Field.Set>
+							<Field.Legend>Submitted by</Field.Legend>
+							<Field.Group>
+								{#each ['submittedBy', 'studentId', 'regNo', 'session', 'date'] as key (key)}
+									{@const field = state[key as keyof typeof state]}
+									<Field.Field>
+										<Field.Label class="text-muted-foreground">{field.label}</Field.Label>
+										<div class="flex items-center gap-2">
+											<Autocomplete
+												bind:value={field.value}
+												placeholder={field.placeholder}
+												disabled={!field.visible}
+												bind:history={savedData[key as keyof typeof savedData] as string[]}
+											/>
+											<Switch
+												bind:checked={field.visible}
+												aria-label={`Toggle ${field.placeholder}`}
+											/>
+										</div>
+									</Field.Field>
+								{/each}
+							</Field.Group>
+						</Field.Set>
+
+						<Field.Set>
+							<Field.Legend>Institution Information</Field.Legend>
+							<Field.Group class="gap-6">
+								<Field.Group>
+									<Field.Field>
+										<Field.Label class="text-muted-foreground"
+											>{state.dept_bottom.label}</Field.Label
+										>
+										<div class="flex items-center gap-2">
+											<Autocomplete
+												placeholder="Department name"
+												disabled={conditions.dept || !state.dept_bottom.visible}
+												bind:value={state.dept_bottom.value}
+												bind:history={savedData.dept_bottom}
+											/>
+											<Switch
+												bind:checked={state.dept_bottom.visible}
+												aria-label="Toggle Bottom Department"
+											/>
+										</div>
+									</Field.Field>
+									<Field.Field orientation="horizontal">
+										<Checkbox id="department-same" bind:checked={conditions.dept} />
+										<Field.Label
+											for="department-same"
+											class="text-xs font-normal text-muted-foreground"
+										>
+											Same as teacher's department
+										</Field.Label>
+									</Field.Field>
+								</Field.Group>
+
+								<Field.Group>
+									<Field.Field>
+										<Field.Label class="text-muted-foreground"
+											>{state.varsity_bottom.label}</Field.Label
+										>
+										<div class="flex items-center gap-2">
+											<Autocomplete
+												placeholder="Name of the Institute"
+												bind:value={state.varsity_bottom.value}
+												disabled={conditions.varsity || !state.varsity_bottom.visible}
+												bind:history={savedData.varsity_bottom}
+											/>
+											<Switch
+												bind:checked={state.varsity_bottom.visible}
+												aria-label="Toggle Bottom Institute"
+											/>
+										</div>
+									</Field.Field>
+									<Field.Field orientation="horizontal">
+										<Checkbox id="institute-same" bind:checked={conditions.varsity} />
+										<Field.Label
+											for="institute-same"
+											class="text-xs font-normal text-muted-foreground"
+										>
+											Same as teacher's institute
+										</Field.Label>
+									</Field.Field>
+								</Field.Group>
+							</Field.Group>
+						</Field.Set>
+						<Field.Set>
+							<Field.Legend>Customization</Field.Legend>
 							<Field.Group>
 								<Field.Field>
-									<Field.Label class="text-muted-foreground"
-										>{state.varsity_bottom.label}</Field.Label
-									>
-									<div class="flex items-center gap-2">
-										<Autocomplete
-											placeholder="Name of the Institute"
-											bind:value={state.varsity_bottom.value}
-											disabled={conditions.varsity || !state.varsity_bottom.visible}
-											bind:history={savedData.varsity_bottom}
-										/>
-										<Switch
-											bind:checked={state.varsity_bottom.visible}
-											aria-label="Toggle Bottom Institute"
-										/>
-									</div>
+									<Field.Label>Document Font</Field.Label>
+									<Select.Root type="single" name="font" bind:value={font}>
+										<Select.Trigger class="w-full">
+											{triggerContent}
+										</Select.Trigger>
+										<Select.Content>
+											<Select.Group>
+												{#each Object.values(fonts) as f (f)}
+													<Select.Item value={f.value} label={f.name}>
+														{f.name}
+													</Select.Item>
+												{/each}
+											</Select.Group>
+										</Select.Content>
+									</Select.Root>
 								</Field.Field>
-								<Field.Field orientation="horizontal">
-									<Checkbox id="institute-same" bind:checked={conditions.varsity} />
-									<Field.Label
-										for="institute-same"
-										class="text-xs font-normal text-muted-foreground"
-									>
-										Same as teacher's institute
-									</Field.Label>
+								<Field.Field>
+									<Field.Label>Template</Field.Label>
+									<TemplateSelector onSelect={templateChange} starting={template} />
 								</Field.Field>
 							</Field.Group>
-						</Field.Group>
-					</Field.Set>
-					<Field.Set>
-						<Field.Legend>Customization</Field.Legend>
-						<Field.Group>
-							<Field.Field>
-								<Field.Label>Document Font</Field.Label>
-								<Select.Root type="single" name="font" bind:value={font}>
-									<Select.Trigger class="w-full">
-										{triggerContent}
-									</Select.Trigger>
-									<Select.Content>
-										<Select.Group>
-											{#each Object.values(fonts) as f (f)}
-												<Select.Item value={f.value} label={f.name}>
-													{f.name}
-												</Select.Item>
-											{/each}
-										</Select.Group>
-									</Select.Content>
-								</Select.Root>
-							</Field.Field>
-							<Field.Field>
-								<Field.Label>Template</Field.Label>
-								<TemplateSelector onSelect={templateChange} starting={template} />
-							</Field.Field>
-						</Field.Group>
-					</Field.Set>
+						</Field.Set>
 
-					<Button class="mt-4 w-full" onclick={download}>Download PDF</Button>
-				</Field.Group>
-			</Card.Content>
-		</Card.Root>
+						<Button class="mt-4 w-full" onclick={download}>Download PDF</Button>
+						<p class="-mt-4 text-xs text-muted-foreground md:hidden">
+							Scroll down to see the preview.
+						</p>
+					</Field.Group>
+				</Card.Content>
+			</Card.Root>
+			<EpitomeBanner />
+		</section>
 		<section class="sticky top-0 flex h-screen items-start justify-center p-0">
 			<Card.Root
 				class="flex h-full w-full flex-col items-center justify-center overflow-hidden border-2 bg-muted/20 p-6"
