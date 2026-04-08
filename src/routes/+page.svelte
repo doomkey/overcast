@@ -19,11 +19,13 @@
 	import { savedData, persistSavedData } from '$lib/stores/saved_data.svelte';
 	//@ts-ignore
 	let state = $state({
-		subtitle: { value: '', visible: true, placeholder: 'A report on' },
+		course_code: { value: '', visible: true, placeholder: 'Course code' },
+		course_title: { value: '', visible: true, placeholder: 'Course title' },
+		subtitle: { value: '', visible: false, placeholder: 'A report on' },
 		title: { value: '', visible: true, placeholder: 'Title of the document' },
 		submittedTo: { value: '', visible: true, placeholder: 'Name of the professor' },
 		designation: { value: '', visible: true, placeholder: 'Designation' },
-		dept: { value: 'Department of Dept.', visible: true, placeholder: 'Department Name' },
+		dept: { value: 'Department of ', visible: true, placeholder: 'Department Name' },
 		dept_bottom: { value: '', visible: true, placeholder: 'Department Name' },
 		varsity: {
 			value: 'Patuakhali Science and Technology University',
@@ -163,6 +165,24 @@
 									bind:history={savedData.title}
 								/>
 								<Switch bind:checked={state.title.visible} aria-label="Toggle Title" />
+							</Field.Field>
+							<Field.Field orientation="horizontal">
+								<Autocomplete
+									bind:value={state.course_code.value}
+									placeholder={state.course_code.placeholder}
+									disabled={!state.course_code.visible}
+									bind:history={savedData.course_code}
+								/>
+								<Switch bind:checked={state.course_code.visible} aria-label="Toggle Title" />
+							</Field.Field>
+							<Field.Field orientation="horizontal">
+								<Autocomplete
+									bind:value={state.course_title.value}
+									placeholder={state.course_title.placeholder}
+									disabled={!state.course_title.visible}
+									bind:history={savedData.course_title}
+								/>
+								<Switch bind:checked={state.course_title.visible} aria-label="Toggle Title" />
 							</Field.Field>
 						</Field.Group>
 					</Field.Set>

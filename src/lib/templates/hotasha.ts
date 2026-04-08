@@ -10,21 +10,38 @@ export const hotashaCoverTemplate = (state: CoverState, font: string) => {
 			{
 				margin: [pt(20), pt(45), pt(20), 0],
 				stack: [
-					{ canvas: [{ type: 'line', x1: 0, y1: 0, x2: pt(170), y2: 0, lineWidth: 0.5 }] },
+					{
+						text: [
+							state.course_code.visible && { text: getVal(state.course_code), bold: true },
+							state.course_code.visible &&
+								state.course_title.visible && { text: ' : ', bold: true },
+							state.course_title.visible && { text: getVal(state.course_title), bold: true }
+						].filter(Boolean),
+						alignment: 'center',
+						margin: [0, 0, 0, pt(5)]
+					},
 					state.subtitle.visible && {
 						text: getVal(state.subtitle),
 						bold: true,
+						alignment: 'center'
+					},
+					{
+						text: '_'.repeat(font === 'JETBRAINSMONO' ? 40 : 80),
 						alignment: 'center',
-						margin: [0, pt(-10), 0, pt(5)]
+						margin: [0, 0, 0, pt(5)]
 					},
 					state.title.visible && {
 						text: getVal(state.title),
 						bold: true,
 						fontSize: 18,
 						alignment: 'center',
-						margin: [0, pt(5), 0, pt(5)]
+						margin: [0, 0, 0, pt(3)]
 					},
-					{ canvas: [{ type: 'line', x1: 0, y1: 0, x2: pt(170), y2: 0, lineWidth: 0.5 }] }
+					{
+						text: '_'.repeat(font === 'JETBRAINSMONO' ? 40 : 80),
+						alignment: 'center',
+						margin: [0, 0, 0, pt(0)]
+					}
 				].filter(Boolean)
 			},
 

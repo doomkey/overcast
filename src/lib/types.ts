@@ -7,6 +7,8 @@ export interface Field {
 export interface CoverState {
 	subtitle: Field;
 	title: Field;
+	course_code: Field;
+	course_title: Field;
 	submittedTo: Field;
 	designation: Field;
 	dept: Field;
@@ -24,6 +26,8 @@ export interface SavedData {
 	id?: string;
 	subtitle: string[];
 	title: string[];
+	course_code: string[];
+	course_title: string[];
 	submittedTo: string[];
 	designation: string[];
 	dept: string[];

@@ -6,6 +6,8 @@ function createSavedData(): SavedData {
 	return {
 		title: [],
 		dept: [],
+		course_code: [],
+		course_title: [],
 		dept_bottom: [],
 		designation: [],
 		regNo: [],

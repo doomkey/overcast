@@ -32,6 +32,16 @@ export const omabossaCoverTemplate = (state: CoverState, font: string) => {
 						[
 							{
 								stack: [
+									{
+										text: [
+											state.course_code.visible && { text: getVal(state.course_code), bold: true },
+											state.course_code.visible &&
+												state.course_title.visible && { text: ' : ', bold: true },
+											state.course_title.visible && { text: getVal(state.course_title), bold: true }
+										].filter(Boolean),
+										alignment: 'center',
+										margin: [0, 0, 0, pt(5)]
+									},
 									state.subtitle.visible && {
 										text: getVal(state.subtitle),
 										italics: true,
