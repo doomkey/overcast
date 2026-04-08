@@ -19,3 +19,20 @@ export interface CoverState {
 	session: Field;
 	date: Field;
 }
+
+export interface SavedData {
+	id?: string;
+	subtitle: string[];
+	title: string[];
+	submittedTo: string[];
+	designation: string[];
+	dept: string[];
+	dept_bottom: string[];
+	varsity: string[];
+	varsity_bottom: string[];
+	submittedBy: string[];
+	studentId: string[];
+	regNo: string[];
+	session: string[];
+	date?: string[];
+}

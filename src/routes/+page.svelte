@@ -15,6 +15,8 @@
 	import * as Field from '$lib/components/ui/field/index.js';
 	import FAQ from '$lib/components/FAQ.svelte';
 	import TemplateSelector from '$lib/components/TemplateSelector.svelte';
+	import Autocomplete from '$lib/components/Autocomplete.svelte';
+	import { savedData, persistSavedData } from '$lib/stores/saved_data.svelte';
 	//@ts-ignore
 	let state = $state({
 		subtitle: { value: '', visible: true, placeholder: 'A report on' },
@@ -50,7 +52,6 @@
 			state.dept_bottom.value = state.dept.value;
 		}
 	});
-
 	let previewUrl = $state('');
 	$effect(() => {
 		if (!browser) return;
@@ -98,14 +99,23 @@
 		const timer = setTimeout(updatePreview, 250);
 		return () => clearTimeout(timer);
 	});
+	function saveAllToHistory() {
+		for (const key of Object.keys(state) as (keyof typeof state)[]) {
+			const trimmed = state[key].value.trim();
+			if (trimmed && !savedData[key].includes(trimmed)) {
+				savedData[key] = [trimmed, ...savedData[key]];
+			}
+		}
+	}
 	function download() {
 		if (!browser) return;
+		saveAllToHistory();
 		const doc = createPDFDocument(
 			$state.snapshot(template),
 			$state.snapshot(state),
 			$state.snapshot(font)
 		);
-		doc.download(`${state.title.value || 'Cover_Page'}.pdf`);
+		doc.download(`Cover ${state.title.value || 'Cover_Page'}${state.studentId.value}.pdf`);
 	}
 	const triggerContent = $derived(
 		Object.values(fonts).find((f) => f.value === font)?.name ?? 'Select a font'
@@ -128,25 +138,29 @@
 		<Card.Root>
 			<Card.Header>
 				<Card.Title>Assignment Details</Card.Title>
-				<Card.Description>Fill in the details to update the cover page preview.</Card.Description>
+				<Card.Description
+					>Data will be saved for future use once you download the page.</Card.Description
+				>
 			</Card.Header>
 			<Card.Content>
 				<Field.Group>
 					<Field.Set>
 						<Field.Group>
 							<Field.Field orientation="horizontal">
-								<Input
+								<Autocomplete
 									bind:value={state.subtitle.value}
 									placeholder={state.subtitle.placeholder}
 									disabled={!state.subtitle.visible}
+									bind:history={savedData.subtitle}
 								/>
 								<Switch bind:checked={state.subtitle.visible} aria-label="Toggle Subtitle" />
 							</Field.Field>
 							<Field.Field orientation="horizontal">
-								<Input
+								<Autocomplete
 									bind:value={state.title.value}
 									placeholder={state.title.placeholder}
 									disabled={!state.title.visible}
+									bind:history={savedData.title}
 								/>
 								<Switch bind:checked={state.title.visible} aria-label="Toggle Title" />
 							</Field.Field>
@@ -156,13 +170,14 @@
 					<Field.Set>
 						<Field.Legend>Submitted to</Field.Legend>
 						<Field.Group>
-							{#each ['submittedTo', 'designation', 'dept', 'varsity'] as key}
+							{#each ['submittedTo', 'designation', 'dept', 'varsity'] as key (key)}
 								{@const field = state[key as keyof typeof state]}
 								<Field.Field orientation="horizontal">
-									<Input
+									<Autocomplete
 										bind:value={field.value}
 										placeholder={field.placeholder}
 										disabled={!field.visible}
+										bind:history={savedData[key as keyof typeof savedData] as string[]}
 									/>
 									<Switch bind:checked={field.visible} aria-label={`Toggle ${field.placeholder}`} />
 								</Field.Field>
@@ -173,13 +188,14 @@
 					<Field.Set>
 						<Field.Legend>Submitted by</Field.Legend>
 						<Field.Group>
-							{#each ['submittedBy', 'studentId', 'regNo', 'session', 'date'] as key}
+							{#each ['submittedBy', 'studentId', 'regNo', 'session', 'date'] as key (key)}
 								{@const field = state[key as keyof typeof state]}
 								<Field.Field orientation="horizontal">
-									<Input
+									<Autocomplete
 										bind:value={field.value}
 										placeholder={field.placeholder}
 										disabled={!field.visible}
+										bind:history={savedData[key as keyof typeof savedData] as string[]}
 									/>
 									<Switch bind:checked={field.visible} aria-label={`Toggle ${field.placeholder}`} />
 								</Field.Field>
@@ -192,10 +208,11 @@
 						<Field.Group class="gap-6">
 							<Field.Group>
 								<Field.Field orientation="horizontal">
-									<Input
+									<Autocomplete
 										placeholder="Department name"
 										disabled={conditions.dept || !state.dept_bottom.visible}
 										bind:value={state.dept_bottom.value}
+										bind:history={savedData.dept_bottom}
 									/>
 									<Switch
 										bind:checked={state.dept_bottom.visible}
@@ -215,10 +232,11 @@
 
 							<Field.Group>
 								<Field.Field orientation="horizontal">
-									<Input
+									<Autocomplete
 										placeholder="Name of the Institute"
 										bind:value={state.varsity_bottom.value}
 										disabled={conditions.varsity || !state.varsity_bottom.visible}
+										bind:history={savedData.varsity_bottom}
 									/>
 									<Switch
 										bind:checked={state.varsity_bottom.visible}
@@ -248,7 +266,7 @@
 									</Select.Trigger>
 									<Select.Content>
 										<Select.Group>
-											{#each Object.values(fonts) as f}
+											{#each Object.values(fonts) as f (f)}
 												<Select.Item value={f.value} label={f.name}>
 													{f.name}
 												</Select.Item>
